@@ -88,7 +88,7 @@ class BaseDistribution(abc.ABC):
 
         raise NotImplementedError
 
-    def _asdict(self) -> dict:
+    def _asdict(self) -> dict[str, Any]:
         return self.__dict__
 
     def __eq__(self, other: Any) -> bool:
@@ -217,7 +217,7 @@ class UniformDistribution(FloatDistribution):
     def __init__(self, low: float, high: float) -> None:
         super().__init__(low=low, high=high, log=False, step=None)
 
-    def _asdict(self) -> dict:
+    def _asdict(self) -> dict[str, Any]:
         d = copy.deepcopy(self.__dict__)
         d.pop("log")
         d.pop("step")
@@ -244,7 +244,7 @@ class LogUniformDistribution(FloatDistribution):
     def __init__(self, low: float, high: float) -> None:
         super().__init__(low=low, high=high, log=True, step=None)
 
-    def _asdict(self) -> dict:
+    def _asdict(self) -> dict[str, Any]:
         d = copy.deepcopy(self.__dict__)
         d.pop("log")
         d.pop("step")
@@ -284,7 +284,7 @@ class DiscreteUniformDistribution(FloatDistribution):
     def __init__(self, low: float, high: float, q: float) -> None:
         super().__init__(low=low, high=high, step=q)
 
-    def _asdict(self) -> dict:
+    def _asdict(self) -> dict[str, Any]:
         d = copy.deepcopy(self.__dict__)
         d.pop("log")
 
@@ -420,7 +420,7 @@ class IntUniformDistribution(IntDistribution):
     def __init__(self, low: int, high: int, step: int = 1) -> None:
         super().__init__(low=low, high=high, log=False, step=step)
 
-    def _asdict(self) -> dict:
+    def _asdict(self) -> dict[str, Any]:
         d = copy.deepcopy(self.__dict__)
         d.pop("log")
         return d
@@ -448,7 +448,7 @@ class IntLogUniformDistribution(IntDistribution):
     def __init__(self, low: int, high: int, step: int = 1) -> None:
         super().__init__(low=low, high=high, log=True, step=step)
 
-    def _asdict(self) -> dict:
+    def _asdict(self) -> dict[str, Any]:
         d = copy.deepcopy(self.__dict__)
         d.pop("log")
         return d
