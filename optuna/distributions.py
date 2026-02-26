@@ -14,6 +14,7 @@ from typing import Union
 from optuna._deprecated import deprecated_class
 from optuna._warnings import optuna_warn
 
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -24,9 +25,7 @@ CategoricalChoiceType = Union[None, bool, int, float, str]
 _float_distribution_deprecated_msg = (
     "Use :class:`~optuna.distributions.FloatDistribution` instead."
 )
-_int_distribution_deprecated_msg = (
-    "Use :class:`~optuna.distributions.IntDistribution` instead."
-)
+_int_distribution_deprecated_msg = "Use :class:`~optuna.distributions.IntDistribution` instead."
 
 
 class BaseDistribution(abc.ABC):
@@ -141,17 +140,13 @@ class FloatDistribution(BaseDistribution):
         self, low: float, high: float, log: bool = False, step: None | float = None
     ) -> None:
         if log and step is not None:
-            raise ValueError(
-                "The parameter `step` is not supported when `log` is true."
-            )
+            raise ValueError("The parameter `step` is not supported when `log` is true.")
 
         if low > high:
             raise ValueError(f"`low <= high` must hold, but got ({low=}, {high=}).")
 
         if log and low <= 0.0:
-            raise ValueError(
-                f"`low > 0` must hold for `log=True`, but got ({low=}, {high=})."
-            )
+            raise ValueError(f"`low > 0` must hold for `log=True`, but got ({low=}, {high=}).")
 
         if step is not None and step <= 0:
             raise ValueError(f"`step > 0` must hold, but got {step=}.")
@@ -353,9 +348,7 @@ class IntDistribution(BaseDistribution):
             raise ValueError(f"`low <= high` must hold, but got ({low=}, {high=}).")
 
         if log and low < 1:
-            raise ValueError(
-                f"`low >= 1` must hold for `log=True`, but got ({low=}, {high=})."
-            )
+            raise ValueError(f"`low >= 1` must hold for `log=True`, but got ({low=}, {high=}).")
 
         if step <= 0:
             raise ValueError(f"`step > 0` must hold, but got {step=}.")
@@ -510,23 +503,17 @@ class CategoricalDistribution(BaseDistribution):
 
         self.choices = tuple(choices)
 
-    def to_external_repr(
-        self, param_value_in_internal_repr: float
-    ) -> CategoricalChoiceType:
+    def to_external_repr(self, param_value_in_internal_repr: float) -> CategoricalChoiceType:
         return self.choices[int(param_value_in_internal_repr)]
 
-    def to_internal_repr(
-        self, param_value_in_external_repr: CategoricalChoiceType
-    ) -> float:
+    def to_internal_repr(self, param_value_in_external_repr: CategoricalChoiceType) -> float:
         try:
             # NOTE(nabenabe): With this implementation, we cannot distinguish some values
             # such as True and 1, or 1.0 and 1. For example, if choices=[True, 1] and external_repr
             # is 1, this method wrongly returns 0 instead of 1. However, we decided to accept this
             # bug for such exceptional choices for less complexity and faster processing.
             return self.choices.index(param_value_in_external_repr)
-        except (
-            ValueError
-        ):  # ValueError: param_value_in_external_repr is not in choices.
+        except ValueError:  # ValueError: param_value_in_external_repr is not in choices.
             # ValueError also happens if external_repr is nan or includes precision error in float.
             for index, choice in enumerate(self.choices):
                 if _categorical_choice_equal(param_value_in_external_repr, choice):
@@ -590,9 +577,7 @@ def json_to_distribution(json_str: str) -> BaseDistribution:
 
     if "name" in json_dict:
         if json_dict["name"] == CategoricalDistribution.__name__:
-            json_dict["attributes"]["choices"] = tuple(
-                json_dict["attributes"]["choices"]
-            )
+            json_dict["attributes"]["choices"] = tuple(json_dict["attributes"]["choices"])
 
         for cls in DISTRIBUTION_CLASSES:
             if json_dict["name"] == cls.__name__:
@@ -654,18 +639,14 @@ def check_distribution_compatibility(
     """
 
     if dist_old.__class__ != dist_new.__class__:
-        raise ValueError(
-            "Cannot set different distribution kind to the same parameter name."
-        )
+        raise ValueError("Cannot set different distribution kind to the same parameter name.")
 
     if isinstance(dist_old, (FloatDistribution, IntDistribution)):
         # For mypy.
         assert isinstance(dist_new, (FloatDistribution, IntDistribution))
 
         if dist_old.log != dist_new.log:
-            raise ValueError(
-                "Cannot set different log configuration to the same parameter name."
-            )
+            raise ValueError("Cannot set different log configuration to the same parameter name.")
 
     if not isinstance(dist_old, CategoricalDistribution):
         return
